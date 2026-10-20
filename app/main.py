@@ -1,26 +1,28 @@
-"""Práctica 1 · Mi primer servidor web con FastAPI."""
+"""Práctica 2 · API de Órdenes con FastAPI y Pydantic."""
+
+import logging
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-app = FastAPI(title="API de Órdenes", version="0.1.0")
+from .routers import orders
+
+logger = logging.getLogger("uvicorn.error")
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Evento de arranque
+    logger.info("API de Órdenes iniciada")
+    yield
+    # Evento de apagado
+    logger.info("API de Órdenes detenida")
+
+
+app = FastAPI(title="API de Órdenes", version="0.2.0", lifespan=lifespan)
+app.include_router(orders.router)
 
 
 @app.get("/health")
 def health() -> dict[str, str]:
-    """Verifica que el servidor está vivo."""
     return {"status": "ok"}
-
-
-@app.get("/saludo/{nombre}")
-def saludar(nombre: str, mayusculas: bool = False) -> dict[str, str]:
-    """`nombre` es parámetro de ruta; `mayusculas` es parámetro de query."""
-    mensaje = f"Hola, {nombre}"
-    if mayusculas:
-        mensaje = mensaje.upper()
-    return {"mensaje": mensaje}
-
-
-@app.get("/cuadrado/{n}")
-def cuadrado(n: int) -> dict[str, int]:
-    """FastAPI convierte y valida `n` gracias al type hint `int`."""
-    return {"n": n, "cuadrado": n * n}
