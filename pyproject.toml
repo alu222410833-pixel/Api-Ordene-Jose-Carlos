@@ -1,0 +1,14 @@
+[project]
+name = "tema1-practica1"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = ["fastapi[standard]>=0.115"]
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
